@@ -3,10 +3,49 @@ from matrix import *
 from math import *
 from gmath import *
 
+def sortPoints(matrix, point):
+    y1 = matrix[point][1]
+    y2 = matrix[point+1][1]
+    y3 = matrix[point+2][1]
+    if y1==min(y1,y2,y3):
+	if y2 < y3:
+            return matrix[point],matrix[point+1],matrix[point+2]
+        else:
+            return matrix[point],matrix[point+2],matrix[point+1]
+    elif y2==min(y1, y2, y3):
+        if y1 < y3:
+            return matrix[point+1],matrix[point],matrix[point+2]
+        else:
+            return matrix[point+1],matrix[point+2],matrix[point]
+    else:
+        if y1 < y2:
+            return matrix[point+2],matrix[point],matrix[point+1]
+        else:
+            return matrix[point+2],matrix[point+1],matrix[point]
 
-def scanline_convert(polygons, i, screen, zbuffer):
-    pass
+def scanline_convert(matrix, point, screen, zbuffer):
+    a = random.randint(0,255)
+    b = random.randint(0,255)
+    c = random.randint(0,255)
+    coors = sortPoints(matrix, point)
+    bx = float(coors[0][0])
+    mx = float(coors[1][0])
+    tx = float(coors[2][0])
+    by = coors[0][1]
+    my = coors[1][1]
+    ty = coors[2][1]
+    y = int(by)
+    x0 = bx
+    x1 = bx
 
+    while y <= int(ty):
+        x0 += (tx-bx)/(my-by)
+	if y < my:
+            x1 += (mx-bx)/(my-by)
+        else:
+            x1 += (tx-mx)/(ty-my)
+        draw_line(int(x0), y, int(x1), y, screen, [a,b,c])
+        y+=1
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0);
