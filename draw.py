@@ -2,6 +2,7 @@ from display import *
 from matrix import *
 from math import *
 from gmath import *
+import random
 
 def sortPoints(matrix, point):
     y1 = matrix[point][1]
@@ -23,7 +24,7 @@ def sortPoints(matrix, point):
         else:
             return matrix[point+2],matrix[point+1],matrix[point]
 
-def scanline_convert(matrix, point, screen, zbuffer):
+def scanline_convert(matrix, point, screen, zbuff):
     a = random.randint(0,255)
     b = random.randint(0,255)
     c = random.randint(0,255)
@@ -31,20 +32,28 @@ def scanline_convert(matrix, point, screen, zbuffer):
     bx = float(coors[0][0])
     mx = float(coors[1][0])
     tx = float(coors[2][0])
+    bz = float(coors[0][2])
+    mz = float(coors[1][2])
+    tz = float(coors[2][2])
     by = coors[0][1]
     my = coors[1][1]
     ty = coors[2][1]
     y = int(by)
     x0 = bx
     x1 = bx
-
-    while y <= int(ty):
-        x0 += (tx-bx)/(my-by)
-	if y < my:
+    z0 = bz
+    z1 = bz
+    while y < ty:
+        if tx != bx:
+            x0 += (tx-bx)/(ty-by)
+        z0 += (tz-bz)/(ty-by)
+        if y < my:
             x1 += (mx-bx)/(my-by)
+            z1 += (mz-bz)/(my-by)
         else:
             x1 += (tx-mx)/(ty-my)
-        draw_line(int(x0), y, int(x1), y, screen, [a,b,c])
+            z1 += (tz-mz)/(ty-my)
+        draw_line(int(x0), y, z0, int(x1), y, z1, screen, zbuff, [a,b,c])
         y+=1
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
@@ -63,28 +72,7 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         normal = calculate_normal(matrix, point)[:]
         #print normal
         if normal[2] > 0:
-            #scanline_convert(matrix, point, screen, zbuffer)            
-            draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       matrix[point][2],
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       matrix[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       matrix[point+2][2],
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       matrix[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       matrix[point][2],
-                       int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       matrix[point+2][2],
-                       screen, zbuffer, color)    
+            scanline_convert(matrix, point, screen, zbuffer)            
         point+= 3
 
 
@@ -294,7 +282,6 @@ def add_point( matrix, x, y, z=0 ):
 
 
 def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
-
     #swap points if going right -> left
     if x0 > x1:
         xt = x0
