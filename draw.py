@@ -43,29 +43,19 @@ def scanline_convert(matrix, point, screen, zbuff):
     x1 = bx
     z0 = bz
     z1 = bz
-    fg = 0
-    ff = 0
+    maxx= max(bx,mx,tx)
+    maxz= max(bz,mz,tz)
     while y < ty:
-        if tx != bx:
-            ff = (tx-bx)/(ty-by)
-            if ff < 10:
-                x0 += ff
-            z0 += (tz-bz)/(ty-by)
+        x0+= (tx-bx)/(ty-by)
+        z0 += (tz-bz)/(ty-by)
         if y < my:
-            fg = (mx-bx)/(my-by)
-            if fg<10:
-                x1 += fg
+            x1 += (mx-bx)/(my-by)
             z1 += (mz-bz)/(my-by)
         else:
-            fg = (tx-mx)/(ty-my)
-            if fg <10:
-                x1 += fg
+            x1 += (tx-mx)/(ty-my)
             z1 += (tz-mz)/(ty-my)
         y+=1
-        if(fg<10 and ff<10):
-            draw_line(int(x0), y, int(z0), int(x1), y, int(z1), screen, zbuff, [a,b,c])
-        else:
-            print fg
+        draw_line(int(x0), y, int(z0), int(x1), y, int(z1), screen, zbuff, [a,b,c])
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0);
