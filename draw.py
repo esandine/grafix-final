@@ -35,27 +35,28 @@ def scanline_convert(matrix, point, screen, zbuff):
     bz = float(coors[0][2])
     mz = float(coors[1][2])
     tz = float(coors[2][2])
-    by = coors[0][1]
-    my = coors[1][1]
-    ty = coors[2][1]
-    y = int(by)
+    by = int(coors[0][1])
+    my = int(coors[1][1])
+    ty = int(coors[2][1])
+    y = by
     x0 = bx
     x1 = bx
     z0 = bz
     z1 = bz
-    maxx= max(bx,mx,tx)
-    maxz= max(bz,mz,tz)
-    while y < ty:
+    if by==my:
+        x1 = mx
+        z1 = mz
+    while y <= ty:
         x0+= (tx-bx)/(ty-by)
         z0 += (tz-bz)/(ty-by)
         if y < my:
             x1 += (mx-bx)/(my-by)
             z1 += (mz-bz)/(my-by)
-        else:
+        elif y>my:
             x1 += (tx-mx)/(ty-my)
             z1 += (tz-mz)/(ty-my)
         y+=1
-        draw_line(int(x0), y, int(z0), int(x1), y, int(z1), screen, zbuff, [a,b,c])
+        draw_line(int(x0), int(y), int(z0), int(x1), int(y), int(z1), screen, zbuff, [a,b,c])
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0);
@@ -74,6 +75,27 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         #print normal
         if normal[2] > 0:
             scanline_convert(matrix, point, screen, zbuffer)            
+            '''draw_line( int(matrix[point][0]),
+                       int(matrix[point][1]),
+                       int(matrix[point][2]),
+                       int(matrix[point+1][0]),
+                       int(matrix[point+1][1]),
+                       int(matrix[point+1][2]),
+                       screen, zbuffer, [100,0,0])
+            draw_line( int(matrix[point+2][0]),
+                       int(matrix[point+2][1]),
+                       int(matrix[point+2][2]),
+                       int(matrix[point+1][0]),
+                       int(matrix[point+1][1]),
+                       int(matrix[point+1][2]),
+                       screen, zbuffer, [100,0,0])
+            draw_line( int(matrix[point][0]),
+                       int(matrix[point][1]),
+                       int(matrix[point][2]),
+                       int(matrix[point+2][0]),
+                       int(matrix[point+2][1]),
+                       int(matrix[point+2][2]),
+                       screen, zbuffer, [100,0,0]) '''
         point+= 3
 
 
