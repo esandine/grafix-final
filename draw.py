@@ -17,6 +17,12 @@ def gen_color(matrix, point, lights):
         r += coeffs['red'][0]*Iamb[0]+coeffs['red'][1]*Idiff[0]+coeffs['red'][2]*Ispec[0]
         g += coeffs['green'][0]*Iamb[1]+coeffs['green'][1]*Idiff[1]+coeffs['green'][2]*Ispec[1]
         b += coeffs['blue'][0]*Iamb[2]+coeffs['blue'][1]*Idiff[2]+coeffs['blue'][2]*Ispec[2]
+    if r > 255:
+        r=0
+    if g > 255:
+        g=0
+    if b > 255:
+        g=0
     return r,g,b
 
 def gen_iamb(matrix, point, light):
@@ -49,11 +55,11 @@ def sortPoints(matrix, point):
             return matrix[point+2],matrix[point+1],matrix[point]
 
 def scanline_convert(matrix, point, screen, zbuff, color):
-    color = gen_color(matrix, point, color)
-    a = color[0]
-    b = color[1]
-    c = color[2]
-    print a, b, c
+    newcolor = gen_color(matrix, point, color)
+    print newcolor
+    a = int(newcolor[0])
+    b = int(newcolor[1])
+    c = int(newcolor[2])
     coors = sortPoints(matrix, point)
     bx = float(coors[0][0])
     mx = float(coors[1][0])
@@ -100,6 +106,7 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         normal = calculate_normal(matrix, point)[:]
         #print normal
         if normal[2] > 0:
+            print color
             scanline_convert(matrix, point, screen, zbuffer, color)
         point+= 3
 
