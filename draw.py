@@ -4,6 +4,30 @@ from math import *
 from gmath import *
 import random
 
+#coeffs in form of r_amb, r_diff, r_spec, g.., b..
+def gen_color(matrix, point, lights):
+    r = 0
+    g = 0
+    b = 0
+    for light in lights:
+        Iamb = gen_iamb(matrix, point, light)
+        Idiff = gen_idiff(matrix, point, light)
+        Ispec = gen_ispec(matric, point, light)
+        coeffs = light['coeffs']
+        r += coeffs[0]*Iamb[0]+coeffs[1]*Idiff[0]+coeffs[2]*Idiff[0]
+        g += coeffs[3]*Iamb[1]+coeffs[4]*Idiff[1]+coeffs[5]*Idiff[1]
+        b += coeffs[6]*Iamb[2]+coeffs[7]*Idiff[2]+coeffs[8]*Idiff[2]
+    return r,g,b
+
+def gen_iamb(matrix, point, amb):
+    return amb
+
+def gen_diff(matrix, point):
+    return 0,0,0
+
+def gen_spec(matrix, point):
+    return 0,0,0
+
 def sortPoints(matrix, point):
     y1 = matrix[point][1]
     y2 = matrix[point+1][1]

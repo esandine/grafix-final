@@ -94,6 +94,16 @@ def second_pass( commands, num_frames ):
                 #print 'knob: ' + knob_name + '\tvalue: ' + str(frames[f][knob_name])
     return frames
 
+def getLights(symbols):
+    i = 0
+    symbos = symbols.keys()
+    ret = []
+    while i < len(symbos):
+        if symbos[i][0] == 'l':
+            ret.append(symbols[symbos[i]])
+        i+=1
+    print ret
+
 def run(filename):
     """
     This function runs an mdl script
@@ -125,7 +135,6 @@ def run(filename):
         screen = new_screen()
         zb = new_zbuffer()
         tmp = []
-
         #Set symbol values for multiple frames
         if num_frames > 1:
             frame = frames[f]
@@ -150,15 +159,18 @@ def run(filename):
                         args[0], args[1], args[2],
                         args[3], args[4], args[5])
                 matrix_mult( stack[-1], tmp )
+                getLights(symbols)
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'sphere':
+                getLights(symbols)
                 add_sphere(tmp,
                            args[0], args[1], args[2], args[3], step)
                 matrix_mult( stack[-1], tmp )
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'torus':
+                getLights(symbols)
                 add_torus(tmp,
                           args[0], args[1], args[2], args[3], args[4], step)
                 matrix_mult( stack[-1], tmp )
