@@ -12,20 +12,20 @@ def gen_color(matrix, point, lights):
     for light in lights:
         Iamb = gen_iamb(matrix, point, light)
         Idiff = gen_idiff(matrix, point, light)
-        Ispec = gen_ispec(matric, point, light)
-        coeffs = light['coeffs']
-        r += coeffs[0]*Iamb[0]+coeffs[1]*Idiff[0]+coeffs[2]*Idiff[0]
-        g += coeffs[3]*Iamb[1]+coeffs[4]*Idiff[1]+coeffs[5]*Idiff[1]
-        b += coeffs[6]*Iamb[2]+coeffs[7]*Idiff[2]+coeffs[8]*Idiff[2]
+        Ispec = gen_ispec(matrix, point, light)
+        coeffs = light[1]['constants']
+        r += coeffs['red'][0]*Iamb[0]+coeffs['red'][1]*Idiff[0]+coeffs['red'][2]*Ispec[0]
+        g += coeffs['green'][0]*Iamb[1]+coeffs['green'][1]*Idiff[1]+coeffs['green'][2]*Ispec[1]
+        b += coeffs['blue'][0]*Iamb[2]+coeffs['blue'][1]*Idiff[2]+coeffs['blue'][2]*Ispec[2]
     return r,g,b
 
-def gen_iamb(matrix, point, amb):
-    return amb
+def gen_iamb(matrix, point, light):
+    return light[1]['color']
 
-def gen_diff(matrix, point):
+def gen_idiff(matrix, point, light):
     return 0,0,0
 
-def gen_spec(matrix, point):
+def gen_ispec(matrix, point, light):
     return 0,0,0
 
 def sortPoints(matrix, point):
@@ -48,10 +48,12 @@ def sortPoints(matrix, point):
         else:
             return matrix[point+2],matrix[point+1],matrix[point]
 
-def scanline_convert(matrix, point, screen, zbuff):
-    a = random.randint(0,255)
-    b = random.randint(0,255)
-    c = random.randint(0,255)
+def scanline_convert(matrix, point, screen, zbuff, color):
+    color = gen_color(matrix, point, color)
+    a = color[0]
+    b = color[1]
+    c = color[2]
+    print a, b, c
     coors = sortPoints(matrix, point)
     bx = float(coors[0][0])
     mx = float(coors[1][0])
@@ -98,28 +100,7 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         normal = calculate_normal(matrix, point)[:]
         #print normal
         if normal[2] > 0:
-            scanline_convert(matrix, point, screen, zbuffer)            
-            '''draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       int(matrix[point][2]),
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       int(matrix[point+1][2]),
-                       screen, zbuffer, [100,0,0])
-            draw_line( int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       int(matrix[point+2][2]),
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       int(matrix[point+1][2]),
-                       screen, zbuffer, [100,0,0])
-            draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       int(matrix[point][2]),
-                       int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       int(matrix[point+2][2]),
-                       screen, zbuffer, [100,0,0]) '''
+            scanline_convert(matrix, point, screen, zbuffer, color)
         point+= 3
 
 

@@ -102,13 +102,12 @@ def getLights(symbols):
         if symbos[i][0] == 'l':
             ret.append(symbols[symbos[i]])
         i+=1
-    print ret
+    return ret
 
 def run(filename):
     """
     This function runs an mdl script
     """
-    color = [255, 255, 255]
     tmp = new_matrix()
     ident( tmp )
 
@@ -159,7 +158,7 @@ def run(filename):
                         args[0], args[1], args[2],
                         args[3], args[4], args[5])
                 matrix_mult( stack[-1], tmp )
-                getLights(symbols)
+                color = getLights(symbols)
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'sphere':
@@ -167,10 +166,11 @@ def run(filename):
                 add_sphere(tmp,
                            args[0], args[1], args[2], args[3], step)
                 matrix_mult( stack[-1], tmp )
+                color = getLights(symbols)
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'torus':
-                getLights(symbols)
+                color = getLights(symbols)
                 add_torus(tmp,
                           args[0], args[1], args[2], args[3], args[4], step)
                 matrix_mult( stack[-1], tmp )
