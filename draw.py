@@ -5,34 +5,83 @@ from gmath import *
 import random
 
 #coeffs in form of r_amb, r_diff, r_spec, g.., b..
-def gen_color(matrix, point, lights):
+def gen_color(matrix, point, lights, normal):
     r = 0
     g = 0
     b = 0
     for light in lights:
         Iamb = gen_iamb(matrix, point, light)
-        Idiff = gen_idiff(matrix, point, light)
-        Ispec = gen_ispec(matrix, point, light)
+        Idiff = gen_idiff(matrix, point, light, normal)
+        Ispec = gen_ispec(matrix, point, light, normal)
         coeffs = light[1]['constants']
         r += coeffs['red'][0]*Iamb[0]+coeffs['red'][1]*Idiff[0]+coeffs['red'][2]*Ispec[0]
         g += coeffs['green'][0]*Iamb[1]+coeffs['green'][1]*Idiff[1]+coeffs['green'][2]*Ispec[1]
         b += coeffs['blue'][0]*Iamb[2]+coeffs['blue'][1]*Idiff[2]+coeffs['blue'][2]*Ispec[2]
     if r > 255:
-        r=0
+        r=255
     if g > 255:
-        g=0
+        g=255
     if b > 255:
-        g=0
+        b=255
     return r,g,b
 
 def gen_iamb(matrix, point, light):
     return light[1]['color']
 
-def gen_idiff(matrix, point, light):
-    return 0,0,0
+def normalize(xyz):
+    m = mag(xyz)
+    if m == 0:
+        return 0, 0, 0
+    else:
+        return mult(xyz, 1/m)
 
-def gen_ispec(matrix, point, light):
-    return 0,0,0
+def mag(xyz):
+    x = xyz[0]
+    y = xyz[1]
+    z = xyz[2]
+    return math.sqrt(x*x+y*y+z*z)
+
+def add(v0, v1):
+    return v0[0]+v1[0], v0[1]+v1[1], v0[2]+v1[2]
+
+def mult(v0, s):
+    return v0[0]*s, v0[1]*s, v0[2]*s
+
+def sub(v0, v1):
+    return add(v0, mult(v1,-1))
+
+def dot(v0, v1):
+    return v0[0]*v1[0]+v0[1]*v1[1]+v0[2]*v1[2]
+
+def costheta(v0, v1):#does dot product stuff
+    v0 = normalize(v0)
+    v1 = normalize(v1)
+    return v0[0]*v1[0]+v0[1]*v1[1]+v0[2]*v1[2]
+
+def gen_idiff(matrix, point, light, normal):
+    ret = [0,0,0]
+    l = light[1]['location']
+    ctheta = costheta(l, normal)
+    colors = light[1]['color']
+    i = 0
+    while i < 3:
+        ret[i]=colors[i]*ctheta
+        i+=1
+    return ret
+
+def gen_ispec(matrix, point, light, normal):
+    ret = [0,0,0]
+    colors = light[1]['color']
+    l = normalize(light[1]['location'])
+    n = normalize(normal)
+    r = sub(mult(n, 2*dot(n, l)), l)
+    v = [0,0,1]
+    calpha = dot(r,v)
+    i = 0
+    while i < 3:
+        ret[i]=colors[i]*calpha
+        i+=1
+    return ret
 
 def sortPoints(matrix, point):
     y1 = matrix[point][1]
@@ -54,9 +103,8 @@ def sortPoints(matrix, point):
         else:
             return matrix[point+2],matrix[point+1],matrix[point]
 
-def scanline_convert(matrix, point, screen, zbuff, color):
-    newcolor = gen_color(matrix, point, color)
-    print newcolor
+def scanline_convert(matrix, point, screen, zbuff, color, normal):
+    newcolor = gen_color(matrix, point, color, normal)
     a = int(newcolor[0])
     b = int(newcolor[1])
     c = int(newcolor[2])
@@ -104,10 +152,8 @@ def draw_polygons( matrix, screen, zbuffer, color ):
     while point < len(matrix) - 2:
 
         normal = calculate_normal(matrix, point)[:]
-        #print normal
         if normal[2] > 0:
-            print color
-            scanline_convert(matrix, point, screen, zbuffer, color)
+            scanline_convert(matrix, point, screen, zbuffer, color, normal)
         point+= 3
 
 
