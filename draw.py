@@ -23,6 +23,13 @@ def gen_color(matrix, point, lights, normal):
         g=255
     if b > 255:
         b=255
+    if r < 0:
+        r=0
+    if g < 0:
+        g=0
+    if b < 0:
+        b=0
+    
     return r,g,b
 
 def gen_iamb(matrix, point, light):
