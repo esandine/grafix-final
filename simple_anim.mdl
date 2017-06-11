@@ -1,8 +1,8 @@
 frames 50
 basename simple
-light l1 0 100 100 250 250 0
-constants l1 .25 .5 .25 .25 .25 0 .3 .3 .4
-light l2 100 0 100 0 100 200
+light l1 4 100 100 250 250 0
+constants l1 .25 .5 .25 .25 .25 .5 .3 .3 .4
+light l2 30 140 100 0 100 200
 constants l2 .25 .5 .25 .5 .5 0 .3 .3 .4
 push
 move 250 250 0
