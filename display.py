@@ -28,11 +28,12 @@ def new_zbuffer( width = XRES, height = YRES ):
     return zb
 
 def plot( screen, zbuffer, color, x, y, z):
-    newy = YRES - 1 - y
+    print "Plotting" + str(x)+","+str(y)
+    newy = YRES - 1 - int(y)
     if ( x >= 0 and x < XRES and newy >= 0 and newy < YRES ):
-        if z > zbuffer[newy][x]:
-            zbuffer[newy][x] = z
-            screen[newy][x] = color[:]
+        if z > zbuffer[newy][int(x)]:
+            zbuffer[newy][int(x)] = z
+            screen[newy][int(x)] = color[:]
 
 def plot_points( screen, zbuffer, color, points):
     i = 0

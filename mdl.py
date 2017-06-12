@@ -214,6 +214,13 @@ def p_statement_box(p):
         commands.append(tuple(p[1:] +[None]))
     else:
         commands.append((p[1], p[3], p[4], p[5], p[6], p[7], p[8], p[2]))
+
+def p_statement_bezier3(p):
+    "statement : BEZIER3 NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"
+    print p
+    commands.append((p[1], p[2],p[3],p[4], p[5],p[6],p[7], p[8],p[9],p[10], p[11],p[12],p[13], p[14]))
+
+
 def p_statement_line(p):
     "statement : LINE NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"
     commands.append(tuple(p[1:]))

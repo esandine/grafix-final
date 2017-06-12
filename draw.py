@@ -335,8 +335,9 @@ def xy_circle(r, step):
     y=0
     z=0
     while theta <= 1.0001:
-       x=r*math.cos(2*math.pi * t)
-       y=r*math.sin(2*math.pi * t)
+       x=r*math.cos(2*math.pi * theta)
+       y=r*math.sin(2*math.pi * theta)
+       theta+=step
        points.append([x,y,z,1])
     return points
 
@@ -355,7 +356,7 @@ def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
         y0 = y
         t+= step
 
-def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step):
+def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step, screen, zbuffer, color):
     xcoefs = generate_curve_coefs(x0, x1, x2, x3, 'bezier')[0]
     ycoefs = generate_curve_coefs(y0, y1, y2, y3, 'bezier')[0]
     zcoefs = generate_curve_coefs(z0, z1, z2, z3, 'bezier')[0]
@@ -367,17 +368,22 @@ def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step
         dy = 3*ycoefs[0] * t*t + 2*ycoefs[1] * t + ycoefs[2]
         z = zcoefs[0] * t*t*t + zcoefs[1] * t*t + zcoefs[2] * t + zcoefs[3]
         dz = 3*zcoefs[0] * t*t + 2*zcoefs[1] * t + zcoefs[2]
-        '''
         xyz = normalize([x,y,z])
         thetax = math.acos(xyz[0])
         thetay = math.acos(xyz[1])
         thetaz = math.acos(xyz[2])
         circle = xy_circle(r, step)
-        circle = matrix_mult(circle, make_rotX(thetax))
-        circle = matrix_mult(circle, make_rotY(thetay))
-        circle = matrix_mult(circle, make_rotZ(thetaz))
-        points.append(circle)'''
-        points.append([x,y,z,1])
+        matrix_mult(make_rotX(thetax),circle)
+        matrix_mult(make_rotY(thetay),circle)
+        matrix_mult(make_rotZ(thetaz),circle)
+        matrix_mult(make_translate(x,y,z),circle)
+        print_matrix(circle)
+        i = 1
+        while i < len(circle):
+            draw_line( circle[i-1][0], circle[i-1][1], circle[i-1][2], circle[i][0], circle[i][1], circle[i][2], screen, zbuffer, color )
+            i+=1
+        draw_line( circle[-1][0], circle[-1][1], circle[-1][2], circle[0][0], circle[0][1], circle[0][2], screen, zbuffer, color )
+        t+=step
     return points
 
 def draw_lines( matrix, screen, zbuffer, color ):
