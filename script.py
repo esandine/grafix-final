@@ -176,6 +176,8 @@ def run(filename):
                 matrix_mult( stack[-1], tmp )
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
+            elif c == 'bezier3':
+                pass
             elif c == 'move':
                 if command[-1]:
                     knob_value = symbols[command[-1]][1]

@@ -17,6 +17,7 @@ tokens = (
     "BOX", 
     "LINE", 
     "BEZIER", 
+    "BEZIER3", 
     "HERMITE", 
     "CIRCLE", 
     "MESH", 
@@ -59,6 +60,7 @@ reserved = {
     "box" : "BOX", 
     "line" : "LINE", 
     "bezier" : "BEZIER", 
+    "bezier3" : "BEZIER3", 
     "hermite" : "HERMITE", 
     "circle" : "CIRCLE", 
     "mesh" : "MESH", 
@@ -267,6 +269,10 @@ def p_statement_rotate(p):
 def p_statement_ambient(p):
     "statement : AMBIENT INT INT INT"
     symbols['ambient'] = ['ambient'] + p[2:]
+
+def p_statement_bezier3(p):
+    "statement : BEZIER3 NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"
+    commands.append((p[1], p[2],p[3],p[4], p[5],p[6],p[7], p[8],p[9],p[10], p[11],p[12],p[13], p[14]))
     
 def p_statement_constants(p):
     "statement : CONSTANTS SYMBOL NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"

@@ -322,7 +322,6 @@ def add_circle( points, cx, cy, cz, r, step ):
     while t <= 1.00001:
         x1 = r * math.cos(2*math.pi * t) + cx;
         y1 = r * math.sin(2*math.pi * t) + cy;
-
         add_edge(points, x0, y0, cz, x1, y1, cz)
         x0 = x1
         y0 = y1
@@ -341,6 +340,27 @@ def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
         add_edge(points, x0, y0, 0, x, y, 0)
         x0 = x
         y0 = y
+        t+= step
+
+def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, step):
+    points = []
+    xcoefs = generate_curve_coefs(x0, x1, x2, x3, 'bezier')[0]
+    ycoefs = generate_curve_coefs(y0, y1, y2, y3, 'bezier')[0]
+    zcoefs = generate_curve_coefs(z0, z1, z2, z3, 'bezier')[0]
+
+    t = step
+    while t <= 1.00001:
+        x = xcoefs[0] * t*t*t + xcoefs[1] * t*t + xcoefs[2] * t + xcoefs[3]
+        dx = 3*xcoefs[0] * t*t + 2*xcoefs[1] * t + xcoefs[2]
+        y = ycoefs[0] * t*t*t + ycoefs[1] * t*t + ycoefs[2] * t + ycoefs[3]
+        dy = 3*ycoefs[0] * t*t + 2*ycoefs[1] * t + ycoefs[2]
+        z = zcoefs[0] * t*t*t + zcoefs[1] * t*t + zcoefs[2] * t + zcoefs[3]
+        dz = 3*zcoefs[0] * t*t + 2*zcoefs[1] * t + zcoefs[2]
+        t2 = step
+        while t2 <=1.00001:
+            alpha = math.acos(
+            xc = x+r*
+        points.append([x, y, z])
         t+= step
 
 def draw_lines( matrix, screen, zbuffer, color ):
