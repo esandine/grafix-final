@@ -327,6 +327,19 @@ def add_circle( points, cx, cy, cz, r, step ):
         y0 = y1
         t+= step
 
+#generates an xy circle to rotate
+def xy_circle(r, step):
+    points = []
+    theta = step
+    x=0
+    y=0
+    z=0
+    while theta <= 1.0001:
+       x=r*math.cos(2*math.pi * t)
+       y=r*math.sin(2*math.pi * t)
+       points.append([x,y,z,1])
+    return points
+
 def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
 
     xcoefs = generate_curve_coefs(x0, x1, x2, x3, curve_type)[0]
@@ -342,12 +355,10 @@ def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
         y0 = y
         t+= step
 
-def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, step):
-    points = []
+def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step):
     xcoefs = generate_curve_coefs(x0, x1, x2, x3, 'bezier')[0]
     ycoefs = generate_curve_coefs(y0, y1, y2, y3, 'bezier')[0]
     zcoefs = generate_curve_coefs(z0, z1, z2, z3, 'bezier')[0]
-
     t = step
     while t <= 1.00001:
         x = xcoefs[0] * t*t*t + xcoefs[1] * t*t + xcoefs[2] * t + xcoefs[3]
@@ -356,12 +367,18 @@ def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, step):
         dy = 3*ycoefs[0] * t*t + 2*ycoefs[1] * t + ycoefs[2]
         z = zcoefs[0] * t*t*t + zcoefs[1] * t*t + zcoefs[2] * t + zcoefs[3]
         dz = 3*zcoefs[0] * t*t + 2*zcoefs[1] * t + zcoefs[2]
-        t2 = step
-        while t2 <=1.00001:
-            alpha = math.acos(
-            xc = x+r*
-        points.append([x, y, z])
-        t+= step
+        '''
+        xyz = normalize([x,y,z])
+        thetax = math.acos(xyz[0])
+        thetay = math.acos(xyz[1])
+        thetaz = math.acos(xyz[2])
+        circle = xy_circle(r, step)
+        circle = matrix_mult(circle, make_rotX(thetax))
+        circle = matrix_mult(circle, make_rotY(thetay))
+        circle = matrix_mult(circle, make_rotZ(thetaz))
+        points.append(circle)'''
+        points.append([x,y,z,1])
+    return points
 
 def draw_lines( matrix, screen, zbuffer, color ):
     if len(matrix) < 2:

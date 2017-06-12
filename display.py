@@ -34,6 +34,12 @@ def plot( screen, zbuffer, color, x, y, z):
             zbuffer[newy][x] = z
             screen[newy][x] = color[:]
 
+def plot_points( screen, zbuffer, color, points):
+    i = 0
+    while i < len(points):
+        plot(screen, zbuffer, color, points[i][0], points[i][1], points[i][2])
+        i+=1
+
 def clear_screen( screen ):
     for y in range( len(screen) ):
         for x in range( len(screen[y]) ):

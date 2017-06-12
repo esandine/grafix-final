@@ -177,7 +177,11 @@ def run(filename):
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'bezier3':
-                pass
+                points = []
+                gen_bezier3(points, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], step)
+                color = [100,0,0]
+                plot(screen, zb, color, points)
+                tmp = []
             elif c == 'move':
                 if command[-1]:
                     knob_value = symbols[command[-1]][1]
