@@ -28,7 +28,6 @@ def new_zbuffer( width = XRES, height = YRES ):
     return zb
 
 def plot( screen, zbuffer, color, x, y, z):
-    print "Plotting" + str(x)+","+str(y)
     newy = YRES - 1 - int(y)
     if ( x >= 0 and x < XRES and newy >= 0 and newy < YRES ):
         if z > zbuffer[newy][int(x)]:

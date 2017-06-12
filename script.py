@@ -122,7 +122,7 @@ def run(filename):
     (name, num_frames) = first_pass(commands)
     frames = second_pass(commands, num_frames)
     #print frames
-    step = 0.1
+    step = 0.05
 
     #print symbols
 
@@ -177,9 +177,11 @@ def run(filename):
                 draw_polygons(tmp, screen, zb, color)
                 tmp = []
             elif c == 'bezier3':
-                points = []
-                color = [100,100,100]
-                gen_bezier3(points, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], step, screen, zb, color)
+                color = getLights(symbols)
+                add_bez3(tmp, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], step)
+                matrix_mult( stack[-1], tmp )
+                draw_polygons(tmp, screen, zb, color)
+                tmp = []
             elif c == 'move':
                 if command[-1]:
                     knob_value = symbols[command[-1]][1]

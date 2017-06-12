@@ -133,7 +133,7 @@ def scanline_convert(matrix, point, screen, zbuff, color, normal):
     if by==my:
         x1 = mx
         z1 = mz
-    while y <= ty:
+    while y < ty:
         x0+= (tx-bx)/(ty-by)
         z0 += (tz-bz)/(ty-by)
         if y < my:
@@ -251,9 +251,50 @@ def generate_sphere( cx, cy, cz, r, step ):
             points.append([x, y, z])
             #print 'rotation: %d\tcircle%d'%(rotation, circle)
     return points
-        
+
 def add_torus( edges, cx, cy, cz, r0, r1, step ):
     points = generate_torus(cx, cy, cz, r0, r1, step)
+    num_steps = int(1/step+0.1)
+    
+    lat_start = 0
+    lat_stop = num_steps
+    longt_start = 0
+    longt_stop = num_steps
+    
+    for lat in range(lat_start, lat_stop):
+        for longt in range(longt_start, longt_stop):
+
+            p0 = lat * (num_steps) + longt;
+            if (longt == num_steps - 1):
+	        p1 = p0 - longt;
+            else:
+	        p1 = p0 + 1;
+            p2 = (p1 + num_steps) % (num_steps * num_steps);
+            p3 = (p0 + num_steps) % (num_steps * num_steps);
+
+            add_polygon(edges,
+                        points[p0][0],
+                        points[p0][1],
+                        points[p0][2],
+                        points[p3][0],
+                        points[p3][1],
+                        points[p3][2],
+                        points[p2][0],
+                        points[p2][1],
+                        points[p2][2] )
+            add_polygon(edges,
+                        points[p0][0],
+                        points[p0][1],
+                        points[p0][2],
+                        points[p2][0],
+                        points[p2][1],
+                        points[p2][2],
+                        points[p1][0],
+                        points[p1][1],
+                        points[p1][2] )
+
+def add_bez3( edges, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step ):
+    points = gen_bezier3(x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step )
     num_steps = int(1/step+0.1)
     
     lat_start = 0
@@ -356,7 +397,8 @@ def add_curve( points, x0, y0, x1, y1, x2, y2, x3, y3, step, curve_type ):
         y0 = y
         t+= step
 
-def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step, screen, zbuffer, color):
+def gen_bezier3( x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step):
+    points=[]
     xcoefs = generate_curve_coefs(x0, x1, x2, x3, 'bezier')[0]
     ycoefs = generate_curve_coefs(y0, y1, y2, y3, 'bezier')[0]
     zcoefs = generate_curve_coefs(z0, z1, z2, z3, 'bezier')[0]
@@ -377,12 +419,10 @@ def gen_bezier3( points, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step
         matrix_mult(make_rotY(thetay),circle)
         matrix_mult(make_rotZ(thetaz),circle)
         matrix_mult(make_translate(x,y,z),circle)
-        print_matrix(circle)
-        i = 1
+        i=0
         while i < len(circle):
-            draw_line( circle[i-1][0], circle[i-1][1], circle[i-1][2], circle[i][0], circle[i][1], circle[i][2], screen, zbuffer, color )
+            points.append(circle[i])
             i+=1
-        draw_line( circle[-1][0], circle[-1][1], circle[-1][2], circle[0][0], circle[0][1], circle[0][2], screen, zbuffer, color )
         t+=step
     return points
 
