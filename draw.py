@@ -302,7 +302,7 @@ def add_bez3( edges, x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3, r, step ):
     longt_start = 0
     longt_stop = num_steps
     
-    for lat in range(lat_start, lat_stop):
+    for lat in range(lat_start, lat_stop-1):
         for longt in range(longt_start, longt_stop):
 
             p0 = lat * (num_steps) + longt;
